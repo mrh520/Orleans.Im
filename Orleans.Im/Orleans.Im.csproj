@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>0bd201e2-0122-4ab6-a510-caab38413d3f</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Orleans.OrleansRuntime" Version="3.4.0" />
+    <PackageReference Include="Microsoft.Orleans.Transactions" Version="3.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Orleans.AdoNet.Extensions\Orleans.AdoNet.Extensions.csproj" />
+    <ProjectReference Include="..\Orleans.AdoNet.MySql\Orleans.AdoNet.MySql.csproj" />
+    <ProjectReference Include="..\Orleans.Im.Common\Orleans.Im.Common.csproj" />
+    <ProjectReference Include="..\Orleans.Im.Grains\Orleans.Im.Grains.csproj" />
+  </ItemGroup>
+
+
+</Project>

@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Orleans.Transactions" Version="3.4.0" />
+        <PackageReference Include="MySql.Data" Version="8.0.18" />
+    </ItemGroup>
+
+    <ItemGroup Label="Packaging">
+        <!-- <Content Include="$(AssemblyName).targets" PackagePath="build\$(TargetFramework)\$(AssemblyName).targets" /> -->
+        <!-- <Content Include="SqlScripts\**\*.sql" PackagePath="content\SqlScripts" /> -->
+        <None Include="readme.txt" pack="true" PackagePath=".">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Orleans.OrleansRuntime" Version="3.4.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Orleans.AdoNet.Extensions\Orleans.AdoNet.Extensions.csproj" />
+    </ItemGroup>
+</Project>
