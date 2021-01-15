@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<style>
+
+    body {
+        padding: 0 100px;
+    }
+
+    textarea {
+        width: 400px;
+        height: 300px;
+    }
+</style>
+<body>
+    <div>
+        <h1><span>用户id</span>:<span id="user"></span></h1>
+        orleans.im 聊天室 <br />
+        <br />
+        <textarea id="content"></textarea><br />
+
+        <button onclick="send()">发送消息</button><br />
+        <input type="text" id="ReceiveId" value="" /><br />
+        <br /><br />
+        接收消息：
+        <br />
+        <div id="div"></div>
+    </div>
+
+
+</body>
+</html>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+<script>
+    obj = {
+        token: "",
+        socket: null
+    }
+    var token;
+    var socket;
+    window.onload = function () {
+        preConnect()
+    }
+    function preConnect() {
+        $.ajax({
+            url: "http://localhost:5001/api/ws/PreConnect",
+            success: function (data) {
+                obj.token = data.token
+                $('#user').html(obj.token)
+                console.log(obj.token)
+                connect()
+            }
+        })
+    }
+
+    function connect() {
+        socket = new WebSocket("ws://localhost:5001/ws?token=" + obj.token)
+        socket.onopen = function (e) {
+            console.log('websocket connect');
+        }
+        socket.onmessage = function (e) {
+            console.log(e.data)
+            $("#div").append(" <span>" + e.data + "</span><br />");
+        }
+    }
+    function send() {
+        var content = $("#content").val();
+        var iiiddd = $("#ReceiveId").val();
+        if (!content) {
+            alert("消息接不能为空!")
+            return;
+        }
+        $("#content").val("");
+        var data = {
+            ReceiveId: iiiddd || obj.token,
+            SendId: obj.token,
+            SendType: 0,
+            ContentType: 0,
+            Content: content,
+            SendDate: new Date()
+        };
+        $.ajax({
+            url: "http://localhost:5001/api/ws/SendMessage",
+            type: "post",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify(data),
+            success: function (data) {
+                token = data.token
+            }
+        })
+    }
+</script>

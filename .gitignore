@@ -58,3 +58,15 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+/Orleans.AdoNet.Extensions/bin
+/Orleans.AdoNet.Extensions/obj
+/Orleans.AdoNet.MySql/bin
+/Orleans.AdoNet.MySql/obj
+/Orleans.Im/.config
+/Orleans.Im/bin
+/Orleans.Im/obj
+/Orleans.Im/Properties/PublishProfiles
+/Orleans.Im.Common/bin
+/Orleans.Im.Common/obj
+/Orleans.Im.Grains/bin
+/Orleans.Im.Grains/obj
