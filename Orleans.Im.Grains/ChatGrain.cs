@@ -34,12 +34,14 @@ namespace Orleans.Im.Grains
             return Task.CompletedTask;
         }
 
-        public Task<string> SendMessage(ChatMessage msg)
+        public async Task<(bool, string)> SendMessage(Packet packet)
         {
             var provider = GetStreamProvider(Constant.STREAM_PROVIDER);
-            var stream = provider.GetStream<ChatMessage>(Guid.Parse(msg.ReceiveId), Constant.SERVERS_STREAM);
-            stream.OnNextAsync(msg);
-            return Task.FromResult("ok");
+            var stream = provider.GetStream<Packet>(Guid.Parse(packet.SendId), Constant.SERVERS_STREAM);
+
+            await stream.OnNextAsync(packet);
+
+            return await Task.FromResult((true, "ok"));
         }
 
         public override Task OnActivateAsync()
@@ -54,53 +56,7 @@ namespace Orleans.Im.Grains
 
         Task Offline();
 
-        Task<string> SendMessage(ChatMessage msg);
+        Task<(bool, string)> SendMessage(Packet packet);
     }
 
-    //public class StreamingHistoryGrain : Grain, IStreamingHistoryGrain, IAsyncObserver<ChatMessage>
-    //{
-    //    private List<int> receivedItems = new List<int>();
-    //    private List<StreamSubscriptionHandle<int>> subscriptionHandles = new List<StreamSubscriptionHandle<int>>();
-
-    //    public async Task Subc(Guid streamId, string provider, string filterData = null)
-    //    {
-    //        var stream = base.GetStreamProvider(provider).GetStream<int>(streamId, "111");
-    //        this.subscriptionHandles.Add(await stream.SubscribeAsync((msg, _) => ProcessAllMessage(msg)));
-    //        await stream.OnNextAsync(1000);
-    //    }
-
-    //    private Task ProcessAllMessage(int message)
-    //    {
-    //        Console.WriteLine(message);
-    //        return Task.CompletedTask;
-    //    }
-    //    public Task<List<int>> GetReceivedItems() => Task.FromResult(this.receivedItems);
-
-    //    public async Task StopBeingConsumer()
-    //    {
-    //        foreach (var sub in this.subscriptionHandles)
-    //        {
-    //            await sub.UnsubscribeAsync();
-    //        }
-    //    }
-
-    //    public Task OnCompletedAsync() => Task.CompletedTask;
-
-    //    public Task OnErrorAsync(Exception ex) => Task.CompletedTask;
-
-    //    public Task OnNextAsync(ChatMessage msg, StreamSequenceToken token = null)
-    //    {
-
-    //        return Task.CompletedTask;
-    //    }
-    //}
-
-    //public interface IStreamingHistoryGrain : IGrainWithStringKey
-    //{
-    //    Task Subc(Guid streamId, string provider, string filterData = null);
-
-    //    Task StopBeingConsumer();
-
-    //    Task<List<int>> GetReceivedItems();
-    //}
 }

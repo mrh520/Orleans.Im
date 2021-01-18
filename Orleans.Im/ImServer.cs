@@ -33,24 +33,16 @@ namespace Orleans.Im
             string clientId = context.Request.Query["token"];
             if (string.IsNullOrEmpty(clientId)) return;
             var socket = await context.WebSockets.AcceptWebSocketAsync();
-            if (_socketClients.ContainsKey(clientId))
-            {
-                _socketClients[clientId] = socket;
-            }
-            else
-            {
-                _socketClients.TryAdd(clientId, socket);
-            }
-
+            _socketClients.TryAdd(clientId, socket);
 
             var buffer = new byte[BufferSize];
             var seg = new ArraySegment<byte>(buffer);
             var grain = _clusterClient.GetGrain<IChatGrain>(clientId);
             await grain.Online();
+            await ImHelper.Online();
+            var stream = _streamProvider.GetStream<Packet>(Guid.Parse(clientId), Constant.SERVERS_STREAM);
 
-            var stream = _streamProvider.GetStream<ChatMessage>(Guid.Parse(clientId), Constant.SERVERS_STREAM);
-
-            await stream.SubscribeAsync((msg, _) => ProcessMessage(msg));
+            await stream.SubscribeAsync(async (msg, _) => await ProcessMessage(msg));
 
             try
             {
@@ -65,18 +57,20 @@ namespace Orleans.Im
             {
             }
             await grain.Offline();
+            await ImHelper.Offline();
             _socketClients.TryRemove(clientId, out _);
 
         }
 
-        private async Task ProcessMessage(ChatMessage message)
+        private async Task ProcessMessage(Packet packet)
         {
-            var flag = _socketClients.TryGetValue(message.ReceiveId, out var socket);
+            var flag = _socketClients.TryGetValue(packet.ReceiveId, out var socket);
             if (flag)
             {
-                var outgoing = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message.ToJson()));
+                var outgoing = new ArraySegment<byte>(Encoding.UTF8.GetBytes(packet.ToJson()));
                 await socket.SendAsync(outgoing, WebSocketMessageType.Text, true, CancellationToken.None);
-            }
+            }           
+
         }
 
     }

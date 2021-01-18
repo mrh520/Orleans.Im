@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Orleans.Im.Common
 {
-    public class ChatMessage
+    public class Packet
     {
         /// <summary>
         /// 接收id
@@ -35,6 +35,11 @@ namespace Orleans.Im.Common
         /// 消息发送时间
         /// </summary>
         public DateTime SendDate { get; set; }
+
+        /// <summary>
+        /// 群聊名称
+        /// </summary>
+        public string ChanName { get; set; }
     }
 
     public enum ChatContentType

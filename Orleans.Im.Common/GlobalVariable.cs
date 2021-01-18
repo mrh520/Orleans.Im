@@ -5,9 +5,10 @@ using System.Net.WebSockets;
 
 namespace Orleans.Im.Common
 {
-    
+
     public class GlobalVariable
-    {    
+    {
         public static IConfiguration Configuration { get; set; }
+        public static IServiceProvider ApplicationServices { get; set; }
     }
 }

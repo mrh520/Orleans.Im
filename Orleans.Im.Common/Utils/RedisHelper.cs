@@ -257,7 +257,7 @@ namespace Orleans.Im.Common
         public IDictionary<string, object> Read(params string[] keys)
         {
             if (keys.Length == 0)
-                return null;
+                return new Dictionary<string, object>();
             try
             {
                 var rVals = GetDb().StringGet(keys.Select(x => (RedisKey)x).ToArray());
@@ -278,7 +278,7 @@ namespace Orleans.Im.Common
             catch (Exception e)
             {
                 //;
-                return null;
+                return new Dictionary<string, object>();
             }
         }
 
@@ -290,7 +290,7 @@ namespace Orleans.Im.Common
         public IDictionary<string, T> Read<T>(params string[] keys)
         {
             if (keys.Length == 0)
-                return null;
+                return new Dictionary<string, T>();
             try
             {
                 var rVals = GetDb().StringGet(keys.Select(x => (RedisKey)x).ToArray());
@@ -304,7 +304,7 @@ namespace Orleans.Im.Common
             catch (Exception e)
             {
                 //;
-                return null;
+                return new Dictionary<string, T>();
             }
         }
 
@@ -636,11 +636,11 @@ namespace Orleans.Im.Common
         public Dictionary<string, object> HashGet(string key, params string[] fields)
         {
             if (key.IsEmpty() || fields.Length == 0)
-                return null;
+                return new Dictionary<string, object>();
             try
             {
                 if (!Exists(key))
-                    return null;
+                    return new Dictionary<string, object>();
                 var vals = GetDb().HashGet(key, fields.Select(x => (RedisValue)x).ToArray());
                 var dict = new Dictionary<string, object>();
                 for (var i = 0; i < fields.Length; i++)
@@ -658,7 +658,7 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                return null;
+                return new Dictionary<string, object>();
             }
         }
 
@@ -671,11 +671,11 @@ namespace Orleans.Im.Common
         public Dictionary<string, T> HashGet<T>(string key, params string[] fields)
         {
             if (key.IsEmpty() || fields.Length == 0)
-                return null;
+                return new Dictionary<string, T>();
             try
             {
                 if (!Exists(key))
-                    return null;
+                    return new Dictionary<string, T>();
                 var vals = GetDb().HashGet(key, fields.Select(x => (RedisValue)x).ToArray());
                 var dict = new Dictionary<string, T>();
                 for (var i = 0; i < fields.Length; i++)
@@ -686,7 +686,7 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                return null;
+                return new Dictionary<string, T>();
             }
         }
 
@@ -698,17 +698,17 @@ namespace Orleans.Im.Common
         public Dictionary<string, object> HashGet(string key)
         {
             if (key.IsEmpty())
-                return null;
+                return new Dictionary<string, object>();
             try
             {
                 if (!Exists(key))
-                    return null;
+                    return new Dictionary<string, object>();
                 var hash = GetDb().HashGetAll(key);
                 return hash.ToDictionary<HashEntry, string, object>(v => v.Name, v => v.Value);
             }
             catch (Exception e)
             {
-                return null;
+                return new Dictionary<string, object>();
             }
         }
 
@@ -720,17 +720,17 @@ namespace Orleans.Im.Common
         public Dictionary<string, T> HashGet<T>(string key)
         {
             if (key.IsEmpty())
-                return null;
+                return new Dictionary<string, T>();
             try
             {
                 if (!Exists(key))
-                    return null;
+                    return new Dictionary<string, T>();
                 var hash = GetDb().HashGetAll(key);
                 return hash.ToDictionary<HashEntry, string, T>(v => v.Name, v => ((string)v.Value).ToObject<T>());
             }
             catch (Exception e)
             {
-                return null;
+                return new Dictionary<string, T>();
             }
         }
 
@@ -761,14 +761,14 @@ namespace Orleans.Im.Common
         public List<string> HashFields(string key)
         {
             if (key.IsEmpty())
-                return null;
+                return new List<string>();
             try
             {
                 return GetDb().HashKeys(key).Select(v => (string)v).ToList();
             }
             catch (Exception e)
             {
-                return null;
+                return new List<string>();
             }
         }
 
@@ -780,14 +780,14 @@ namespace Orleans.Im.Common
         public List<T> HashFields<T>(string key)
         {
             if (key.IsEmpty())
-                return null;
+                return new List<T>();
             try
             {
                 return GetDb().HashKeys(key).Select(v => ((string)v).ToObject<T>()).ToList();
             }
             catch (Exception e)
             {
-                return null;
+                return new List<T>();
             }
         }
 
@@ -953,14 +953,14 @@ namespace Orleans.Im.Common
         public string ListLeftPop(string key)
         {
             if (key.IsEmpty())
-                return string.Empty;
+                return "";
             try
             {
                 return GetDb().ListLeftPop(key);
             }
             catch (Exception e)
             {
-                return null;
+                return "";
             }
         }
 
@@ -992,15 +992,14 @@ namespace Orleans.Im.Common
         public string ListRightPop(string key)
         {
             if (key.IsEmpty())
-                return string.Empty;
+                return "";
             try
             {
                 return GetDb().ListRightPop(key);
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return "";
             }
         }
 
@@ -1097,15 +1096,14 @@ namespace Orleans.Im.Common
         public string ListGetByIndex(string key, long index)
         {
             if (key.IsEmpty())
-                return string.Empty;
+                return "";
             try
             {
                 return GetDb().ListGetByIndex(key, index);
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return "";
             }
         }
 
@@ -1119,15 +1117,14 @@ namespace Orleans.Im.Common
         public List<string> ListRange(string key, long start = 0, long stop = -1)
         {
             if (key.IsEmpty())
-                return null;
+                return new List<string>();
             try
             {
                 return GetDb().ListRange(key, start, stop).Select(v => (string)v).ToList();
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<string>();
             }
         }
 
@@ -1141,15 +1138,14 @@ namespace Orleans.Im.Common
         public List<T> ListRange<T>(string key, long start = 0, long stop = -1)
         {
             if (key.IsEmpty())
-                return null;
+                return new List<T>();
             try
             {
                 return GetDb().ListRange(key, start, stop).Select(v => ((string)v).ToObject<T>()).ToList();
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<T>();
             }
         }
 
@@ -1279,15 +1275,14 @@ namespace Orleans.Im.Common
         public string SetPop(string key)
         {
             if (key.IsEmpty())
-                return string.Empty;
+                return "";
             try
             {
                 return GetDb().SetPop(key);
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return "";
             }
         }
 
@@ -1322,15 +1317,14 @@ namespace Orleans.Im.Common
         public List<string> SetRandomMembers(string key, long count = 1)
         {
             if (key.IsEmpty() || count == 0)
-                return null;
+                return new List<string>();
             try
             {
                 return GetDb().SetRandomMembers(key, count).Select(x => (string)x).ToList();
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<string>();
             }
         }
 
@@ -1342,7 +1336,7 @@ namespace Orleans.Im.Common
         public List<string> SetMembers(string key)
         {
             if (key.IsEmpty())
-                return null;
+                return new List<string>();
 
             try
             {
@@ -1350,8 +1344,7 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<string>();
             }
         }
 
@@ -1405,15 +1398,14 @@ namespace Orleans.Im.Common
         public List<string> SetDifference(params string[] keys)
         {
             if (keys.Length < 2)
-                return null;
+                return new List<string>();
             try
             {
                 return GetDb().SetCombine(SetOperation.Difference, keys.Select(x => (RedisKey)x).ToArray()).Select(x => (string)x).ToList();
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<string>();
             }
         }
 
@@ -1446,15 +1438,14 @@ namespace Orleans.Im.Common
         public List<string> SetIntersect(params string[] keys)
         {
             if (keys.Length < 2)
-                return null;
+                return new List<string>();
             try
             {
                 return GetDb().SetCombine(SetOperation.Intersect, keys.Select(x => (RedisKey)x).ToArray()).Select(x => (string)x).ToList();
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<string>();
             }
         }
 
@@ -1487,15 +1478,14 @@ namespace Orleans.Im.Common
         public List<string> SetUnion(params string[] keys)
         {
             if (keys.Length < 2)
-                return null;
+                return new List<string>();
             try
             {
                 return GetDb().SetCombine(SetOperation.Union, keys.Select(x => (RedisKey)x).ToArray()).Select(x => (string)x).ToList();
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<string>();
             }
         }
 
@@ -1763,7 +1753,7 @@ namespace Orleans.Im.Common
         public List<string> SortedSetRangeByRank(string key, long start = 0, long stop = -1, string orderType = "asc")
         {
             if (key.IsEmpty() || (orderType != "asc" && orderType != "desc"))
-                return null;
+                return new List<string>();
 
             try
             {
@@ -1771,8 +1761,7 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<string>();
             }
         }
 
@@ -1787,7 +1776,7 @@ namespace Orleans.Im.Common
         public Dictionary<string, double> SortedSetRangeByRankWithScores(string key, long start = 0, long stop = -1, string orderType = "asc")
         {
             if (key.IsEmpty() || (orderType != "asc" && orderType != "desc"))
-                return null;
+                return new Dictionary<string, double>();
 
             try
             {
@@ -1795,8 +1784,7 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new Dictionary<string, double>();
             }
         }
 
@@ -1814,7 +1802,7 @@ namespace Orleans.Im.Common
         public List<string> SortedSetRangeByScore(string key, double minScore = -1.0 / 0.0, double maxScore = 1.0 / 0.0, int includeType = 0, string orderType = "asc", long skip = 0, long take = -1)
         {
             if (key.IsEmpty() || includeType < 0 || includeType > 1 || (orderType != "asc" && orderType != "desc"))
-                return null;
+                return new List<string>();
 
             try
             {
@@ -1822,8 +1810,7 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<string>();
             }
         }
 
@@ -1841,7 +1828,7 @@ namespace Orleans.Im.Common
         public Dictionary<string, double> SortedSetRangeByScoreWithScores(string key, double minScore = -1.0 / 0.0, double maxScore = 1.0 / 0.0, int includeType = 0, string orderType = "asc", long skip = 0, long take = -1)
         {
             if (key.IsEmpty() || includeType < 0 || includeType > 1 || (orderType != "asc" && orderType != "desc"))
-                return null;
+                return new Dictionary<string, double>();
 
             try
             {
@@ -1849,8 +1836,7 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new Dictionary<string, double>();
             }
         }
 
@@ -1970,7 +1956,7 @@ namespace Orleans.Im.Common
         public IDictionary<string, object> Read(int dbIndex, params string[] keys)
         {
             if (keys.Length == 0)
-                return null;
+                return new Dictionary<string, object>();
             try
             {
                 var rVals = GetDb(dbIndex).StringGet(keys.Select(x => (RedisKey)x).ToArray());
@@ -1990,8 +1976,7 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new Dictionary<string, object>();
             }
         }
 
@@ -2003,7 +1988,7 @@ namespace Orleans.Im.Common
         public IDictionary<string, T> Read<T>(int dbIndex, params string[] keys)
         {
             if (keys.Length == 0)
-                return null;
+                return new Dictionary<string, T>();
             try
             {
                 var rVals = GetDb(dbIndex).StringGet(keys.Select(x => (RedisKey)x).ToArray());
@@ -2016,8 +2001,7 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new Dictionary<string, T>();
             }
         }
 
@@ -2334,11 +2318,11 @@ namespace Orleans.Im.Common
         public Dictionary<string, object> HashGet(int dbIndex, string key, params string[] fields)
         {
             if (key.IsEmpty() || fields.Length == 0)
-                return null;
+                return new Dictionary<string, object>();
             try
             {
                 if (!Exists(key))
-                    return null;
+                    return new Dictionary<string, object>();
                 var vals = GetDb(dbIndex).HashGet(key, fields.Select(x => (RedisValue)x).ToArray());
                 var dict = new Dictionary<string, object>();
                 for (var i = 0; i < fields.Length; i++)
@@ -2356,8 +2340,7 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new Dictionary<string, object>();
             }
         }
 
@@ -2370,11 +2353,11 @@ namespace Orleans.Im.Common
         public Dictionary<string, T> HashGet<T>(int dbIndex, string key, params string[] fields)
         {
             if (key.IsEmpty() || fields.Length == 0)
-                return null;
+                return new Dictionary<string, T>();
             try
             {
                 if (!Exists(key))
-                    return null;
+                    return new Dictionary<string, T>();
                 var vals = GetDb(dbIndex).HashGet(key, fields.Select(x => (RedisValue)x).ToArray());
                 var dict = new Dictionary<string, T>();
                 for (var i = 0; i < fields.Length; i++)
@@ -2385,8 +2368,7 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new Dictionary<string, T>();
             }
         }
 
@@ -2398,18 +2380,17 @@ namespace Orleans.Im.Common
         public Dictionary<string, object> HashGet(int dbIndex, string key)
         {
             if (key.IsEmpty())
-                return null;
+                return new Dictionary<string, object>();
             try
             {
                 if (!Exists(key))
-                    return null;
+                    return new Dictionary<string, object>();
                 var hash = GetDb(dbIndex).HashGetAll(key);
                 return hash.ToDictionary<HashEntry, string, object>(v => v.Name, v => v.Value);
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new Dictionary<string, object>();
             }
         }
 
@@ -2421,18 +2402,17 @@ namespace Orleans.Im.Common
         public Dictionary<string, T> HashGet<T>(int dbIndex, string key)
         {
             if (key.IsEmpty())
-                return null;
+                return new Dictionary<string, T>();
             try
             {
                 if (!Exists(key))
-                    return null;
+                    return new Dictionary<string, T>();
                 var hash = GetDb(dbIndex).HashGetAll(key);
                 return hash.ToDictionary<HashEntry, string, T>(v => v.Name, v => ((string)v.Value).ToObject<T>());
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new Dictionary<string, T>();
             }
         }
 
@@ -2451,7 +2431,6 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                ;
                 return 0;
             }
         }
@@ -2464,15 +2443,14 @@ namespace Orleans.Im.Common
         public List<string> HashFields(int dbIndex, string key)
         {
             if (key.IsEmpty())
-                return null;
+                return new List<string>();
             try
             {
                 return GetDb(dbIndex).HashKeys(key).Select(v => (string)v).ToList();
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<string>();
             }
         }
 
@@ -2484,15 +2462,14 @@ namespace Orleans.Im.Common
         public List<T> HashFields<T>(int dbIndex, string key)
         {
             if (key.IsEmpty())
-                return null;
+                return new List<T>();
             try
             {
                 return GetDb(dbIndex).HashKeys(key).Select(v => ((string)v).ToObject<T>()).ToList();
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<T>();
             }
         }
 
@@ -2665,15 +2642,14 @@ namespace Orleans.Im.Common
         public string ListLeftPop(int dbIndex, string key)
         {
             if (key.IsEmpty())
-                return string.Empty;
+                return "";
             try
             {
                 return GetDb(dbIndex).ListLeftPop(key);
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return "";
             }
         }
 
@@ -2705,15 +2681,14 @@ namespace Orleans.Im.Common
         public string ListRightPop(int dbIndex, string key)
         {
             if (key.IsEmpty())
-                return string.Empty;
+                return "";
             try
             {
                 return GetDb(dbIndex).ListRightPop(key);
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return "";
             }
         }
 
@@ -2810,15 +2785,14 @@ namespace Orleans.Im.Common
         public string ListGetByIndex(int dbIndex, string key, long index)
         {
             if (key.IsEmpty())
-                return string.Empty;
+                return "";
             try
             {
                 return GetDb(dbIndex).ListGetByIndex(key, index);
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return "";
             }
         }
 
@@ -2832,15 +2806,14 @@ namespace Orleans.Im.Common
         public List<string> ListRange(int dbIndex, string key, long start = 0, long stop = -1)
         {
             if (key.IsEmpty())
-                return null;
+                return new List<string>();
             try
             {
                 return GetDb(dbIndex).ListRange(key, start, stop).Select(v => (string)v).ToList();
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<string>();
             }
         }
 
@@ -2854,15 +2827,14 @@ namespace Orleans.Im.Common
         public List<T> ListRange<T>(int dbIndex, string key, long start = 0, long stop = -1)
         {
             if (key.IsEmpty())
-                return null;
+                return new List<T>();
             try
             {
                 return GetDb(dbIndex).ListRange(key, start, stop).Select(v => ((string)v).ToObject<T>()).ToList();
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<T>();
             }
         }
 
@@ -2992,15 +2964,14 @@ namespace Orleans.Im.Common
         public string SetPop(int dbIndex, string key)
         {
             if (key.IsEmpty())
-                return string.Empty;
+                return "";
             try
             {
                 return GetDb(dbIndex).SetPop(key);
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return "";
             }
         }
 
@@ -3035,15 +3006,14 @@ namespace Orleans.Im.Common
         public List<string> SetRandomMembers(int dbIndex, string key, long count = 1)
         {
             if (key.IsEmpty() || count == 0)
-                return null;
+                return new List<string>();
             try
             {
                 return GetDb(dbIndex).SetRandomMembers(key, count).Select(x => (string)x).ToList();
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<string>();
             }
         }
 
@@ -3055,7 +3025,7 @@ namespace Orleans.Im.Common
         public List<string> SetMembers(int dbIndex, string key)
         {
             if (key.IsEmpty())
-                return null;
+                return new List<string>();
 
             try
             {
@@ -3063,8 +3033,7 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<string>();
             }
         }
 
@@ -3118,15 +3087,14 @@ namespace Orleans.Im.Common
         public List<string> SetDifference(int dbIndex, params string[] keys)
         {
             if (keys.Length < 2)
-                return null;
+                return new List<string>();
             try
             {
                 return GetDb(dbIndex).SetCombine(SetOperation.Difference, keys.Select(x => (RedisKey)x).ToArray()).Select(x => (string)x).ToList();
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<string>();
             }
         }
 
@@ -3159,15 +3127,14 @@ namespace Orleans.Im.Common
         public List<string> SetIntersect(int dbIndex, params string[] keys)
         {
             if (keys.Length < 2)
-                return null;
+                return new List<string>();
             try
             {
                 return GetDb(dbIndex).SetCombine(SetOperation.Intersect, keys.Select(x => (RedisKey)x).ToArray()).Select(x => (string)x).ToList();
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<string>();
             }
         }
 
@@ -3200,15 +3167,15 @@ namespace Orleans.Im.Common
         public List<string> SetUnion(int dbIndex, params string[] keys)
         {
             if (keys.Length < 2)
-                return null;
+                return new List<string>();
             try
             {
                 return GetDb(dbIndex).SetCombine(SetOperation.Union, keys.Select(x => (RedisKey)x).ToArray()).Select(x => (string)x).ToList();
             }
             catch (Exception e)
             {
-                ;
-                return null;
+
+                return new List<string>();
             }
         }
 
@@ -3476,7 +3443,7 @@ namespace Orleans.Im.Common
         public List<string> SortedSetRangeByRank(int dbIndex, string key, long start = 0, long stop = -1, string orderType = "asc")
         {
             if (key.IsEmpty() || (orderType != "asc" && orderType != "desc"))
-                return null;
+                return new List<string>();
 
             try
             {
@@ -3484,8 +3451,7 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<string>();
             }
         }
 
@@ -3500,7 +3466,7 @@ namespace Orleans.Im.Common
         public Dictionary<string, double> SortedSetRangeByRankWithScores(int dbIndex, string key, long start = 0, long stop = -1, string orderType = "asc")
         {
             if (key.IsEmpty() || (orderType != "asc" && orderType != "desc"))
-                return null;
+                return new Dictionary<string, double>();
 
             try
             {
@@ -3508,8 +3474,7 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new Dictionary<string, double>();
             }
         }
 
@@ -3527,7 +3492,7 @@ namespace Orleans.Im.Common
         public List<string> SortedSetRangeByScore(int dbIndex, string key, double minScore = -1.0 / 0.0, double maxScore = 1.0 / 0.0, int includeType = 0, string orderType = "asc", long skip = 0, long take = -1)
         {
             if (key.IsEmpty() || includeType < 0 || includeType > 1 || (orderType != "asc" && orderType != "desc"))
-                return null;
+                return new List<string>();
 
             try
             {
@@ -3535,8 +3500,7 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new List<string>();
             }
         }
 
@@ -3554,7 +3518,7 @@ namespace Orleans.Im.Common
         public Dictionary<string, double> SortedSetRangeByScoreWithScores(int dbIndex, string key, double minScore = -1.0 / 0.0, double maxScore = 1.0 / 0.0, int includeType = 0, string orderType = "asc", long skip = 0, long take = -1)
         {
             if (key.IsEmpty() || includeType < 0 || includeType > 1 || (orderType != "asc" && orderType != "desc"))
-                return null;
+                return new Dictionary<string, double>();
 
             try
             {
@@ -3562,8 +3526,7 @@ namespace Orleans.Im.Common
             }
             catch (Exception e)
             {
-                ;
-                return null;
+                return new Dictionary<string, double>();
             }
         }
 

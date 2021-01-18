@@ -60,6 +60,7 @@ namespace Orleans.Im
                    {
                        //var grainFactory = (IGrainFactory)app.ApplicationServices.GetService(typeof(IGrainFactory));
                        var provider = app.ApplicationServices;
+                       GlobalVariable.ApplicationServices = provider;
                        app.Map("/ws", appcur =>
                        {
                            var server = new ImServer(provider);
@@ -88,7 +89,6 @@ namespace Orleans.Im
                })
                .ConfigureServices(services =>
                {
-
                    services.AddControllers();
                })
            .RunConsoleAsync();
