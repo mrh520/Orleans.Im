@@ -17,6 +17,8 @@ using Orleans.Im.Common;
 using System.Net.WebSockets;
 using System.Threading;
 using Orleans.AdoNet;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Orleans.Im
 {
@@ -51,7 +53,8 @@ namespace Orleans.Im
                    builder.AddMemoryGrainStorage(Constant.PUBSUB_PROVIDER);
                    builder.AddSimpleMessageStreamProvider(Constant.STREAM_PROVIDER, opt => opt.FireAndForgetDelivery = true);
                    builder.UseTransactions();
-
+                   //builder.AddIncomingGrainCallFilter<LoggingCallFilter>();
+                   //builder.AddOutgoingGrainCallFilter<LoggingCallFilter2>();
                    builder.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IChatGrain).Assembly).WithReferences());
                })
                .ConfigureWebHostDefaults(webBuilder =>
@@ -89,7 +92,11 @@ namespace Orleans.Im
                })
                .ConfigureServices(services =>
                {
-                   services.AddControllers();
+                   services.AddControllers().AddNewtonsoftJson(options =>
+                   {
+                       options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+                       options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                   });
                })
            .RunConsoleAsync();
     }

@@ -28,6 +28,7 @@ namespace Orleans.Im
                     {
                         // 获取群聊成员
                         var list = RedisHelper.Instance.HashFields(packet.ChanName);
+                        var grain = _client.GetGrain<IChatGrain>(packet.SendId);
                         foreach (var receiveId in list)
                         {
                             //不给自己发消息                           
@@ -35,7 +36,6 @@ namespace Orleans.Im
                             {
                                 continue;
                             }
-                            var grain = _client.GetGrain<IChatGrain>(packet.SendId);
                             packet.ReceiveId = receiveId;
                             await grain.SendMessage(packet);
                         }

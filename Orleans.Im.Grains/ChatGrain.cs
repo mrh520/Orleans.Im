@@ -13,25 +13,12 @@ using Orleans.Streams;
 
 namespace Orleans.Im.Grains
 {
-    public class ChatGrain : Grain, IChatGrain
+    public class ChatGrain : Grain, IChatGrain,IIncomingGrainCallFilter
     {
         IClusterClient _client;
         public ChatGrain(IClusterClient client)
         {
             _client = client;
-        }
-        private bool status = false;
-        public async Task<bool> Online()
-        {
-            status = true;
-            return await Task.FromResult(status);
-        }
-
-        public Task Offline()
-        {
-            var ss = new ClientWebSocket();
-            status = false;
-            return Task.CompletedTask;
         }
 
         public async Task<(bool, string)> SendMessage(Packet packet)
@@ -48,14 +35,15 @@ namespace Orleans.Im.Grains
         {
             return base.OnActivateAsync();
         }
+
+        public async Task Invoke(IIncomingGrainCallContext context)
+        {
+            await context.Invoke();
+        }
     }
 
     public interface IChatGrain : IGrainWithStringKey
     {
-        Task<bool> Online();
-
-        Task Offline();
-
         Task<(bool, string)> SendMessage(Packet packet);
     }
 

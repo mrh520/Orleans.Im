@@ -18,3 +18,4 @@ crashlytics-build.properties
 /Orleans.Im.Grains/bin
 /Orleans.Im.Grains/obj
 /.vs/Orleans.Im
+/Orleans.Im/wwwroot/layim

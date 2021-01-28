@@ -37,8 +37,6 @@ namespace Orleans.Im
 
             var buffer = new byte[BufferSize];
             var seg = new ArraySegment<byte>(buffer);
-            var grain = _clusterClient.GetGrain<IChatGrain>(clientId);
-            await grain.Online();
             await ImHelper.Online();
             var stream = _streamProvider.GetStream<Packet>(Guid.Parse(clientId), Constant.SERVERS_STREAM);
 
@@ -56,7 +54,12 @@ namespace Orleans.Im
             catch
             {
             }
-            await grain.Offline();
+            // 防止重复订阅
+            var handles = await stream.GetAllSubscriptionHandles();
+            foreach (var handle in handles.Where(c => c.StreamIdentity.Guid == Guid.Parse(clientId)))
+            {
+                await handle.UnsubscribeAsync();
+            }
             await ImHelper.Offline();
             _socketClients.TryRemove(clientId, out _);
 
@@ -69,7 +72,7 @@ namespace Orleans.Im
             {
                 var outgoing = new ArraySegment<byte>(Encoding.UTF8.GetBytes(packet.ToJson()));
                 await socket.SendAsync(outgoing, WebSocketMessageType.Text, true, CancellationToken.None);
-            }           
+            }
 
         }
 

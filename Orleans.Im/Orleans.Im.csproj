@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.4" />
     <PackageReference Include="Microsoft.Orleans.OrleansRuntime" Version="3.4.0" />
     <PackageReference Include="Microsoft.Orleans.Transactions" Version="3.4.0" />
   </ItemGroup>
@@ -15,6 +16,10 @@
     <ProjectReference Include="..\Orleans.AdoNet.MySql\Orleans.AdoNet.MySql.csproj" />
     <ProjectReference Include="..\Orleans.Im.Common\Orleans.Im.Common.csproj" />
     <ProjectReference Include="..\Orleans.Im.Grains\Orleans.Im.Grains.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\layim\aspnet_client\system_web\4_0_30319\" />
   </ItemGroup>
 
 
