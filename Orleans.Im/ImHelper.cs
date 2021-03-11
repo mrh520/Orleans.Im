@@ -103,20 +103,18 @@ namespace Orleans.Im
         /// 上线
         /// </summary>
         /// <returns></returns>
-        public static Task Online()
+        public static void Online()
         {
             RedisHelper.Instance.StringIncrement(Constant.WS_IM_ONLINE, 1);
-            return Task.CompletedTask;
         }
 
         /// <summary>
         /// 下线
         /// </summary>
         /// <returns></returns>
-        public static Task Offline()
+        public static void Offline()
         {
             RedisHelper.Instance.StringDecrement(Constant.WS_IM_ONLINE, 1);
-            return Task.CompletedTask;
         }
 
         /// <summary>

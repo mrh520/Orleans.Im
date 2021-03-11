@@ -50,7 +50,14 @@ namespace Orleans.Im
                    //    op.ConnectionString = connectionString;
                    //    op.UseJsonFormat = true;
                    //});
-                   builder.AddMemoryGrainStorage(Constant.PUBSUB_PROVIDER);
+                   builder.AddAdoNetGrainStorage(Constant.PUBSUB_PROVIDER, op =>
+                   {
+                       op.Invariant = AdoNetInvariants.InvariantNameMySql;
+                       op.ConnectionString = connectionString;
+                       op.UseJsonFormat = true;
+                   });
+                   //builder.AddAdoNetGrainStorage(Constant.PUBSUB_PROVIDER);
+                   //builder.AddMemoryGrainStorage(Constant.PUBSUB_PROVIDER);
                    builder.AddSimpleMessageStreamProvider(Constant.STREAM_PROVIDER, opt => opt.FireAndForgetDelivery = true);
                    builder.UseTransactions();
                    //builder.AddIncomingGrainCallFilter<LoggingCallFilter>();

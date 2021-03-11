@@ -37,9 +37,14 @@ namespace Orleans.Im
 
             var buffer = new byte[BufferSize];
             var seg = new ArraySegment<byte>(buffer);
-            await ImHelper.Online();
+            ImHelper.Online();
             var stream = _streamProvider.GetStream<Packet>(Guid.Parse(clientId), Constant.SERVERS_STREAM);
-
+            // 每次订阅事件前将已订阅的事件移除 防止重复触发订阅事件
+            var handles = await stream.GetAllSubscriptionHandles();
+            foreach (var handle in handles.Where(c => c.StreamIdentity.Guid == Guid.Parse(clientId)))
+            {
+                await handle.UnsubscribeAsync();
+            }
             await stream.SubscribeAsync(async (msg, _) => await ProcessMessage(msg));
 
             try
@@ -54,13 +59,8 @@ namespace Orleans.Im
             catch
             {
             }
-            // 防止重复订阅
-            var handles = await stream.GetAllSubscriptionHandles();
-            foreach (var handle in handles.Where(c => c.StreamIdentity.Guid == Guid.Parse(clientId)))
-            {
-                await handle.UnsubscribeAsync();
-            }
-            await ImHelper.Offline();
+
+            ImHelper.Offline();
             _socketClients.TryRemove(clientId, out _);
 
         }
